@@ -247,7 +247,9 @@ void Graph::breadthFirstSearch(ofstream& output_file)
 
 Graph* Graph::getVertexInduced(int* listIdNodes)
 {
+    Graph *subgraph = new Graph(0, this->getDirected(), this->getWeightedEdge(), this->getWeightedNode());
 
+    
 }
 
 Graph* Graph::agmKuskal()
