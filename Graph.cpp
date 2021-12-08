@@ -110,16 +110,22 @@ void Graph::setLastNode(Node *node)
 // Precisamos conhecer como funciona o arquivo de leitura
 void Graph::insertNode(int id)
 {
-    if (getFirstNode() != nullptr) {
-        if (searchNode(id)) {
+    if (getFirstNode() != nullptr)
+    {
+        if (searchNode(id))
+        {
             cerr << "Erro: Nó " << id << " já foi inserido" << endl;
-        } else {
+        }
+        else
+        {
             Node *node = new Node(id);
             getLastNode()->setNextNode(node);
             setLastNode(node);
             this->order++;
         }
-    } else {
+    }
+    else
+    {
         Node *node = new Node(id);
         setFirstNode(node);
         setLastNode(node);
@@ -132,22 +138,28 @@ void Graph::insertEdge(int id, int target_id, float weight)
     Node *node = getNode(id);
     Node *targetNode = getNode(target_id);
 
-    if (node == nullptr) {
+    if (node == nullptr)
+    {
         insertNode(id);
         node = getNode(id);
     }
 
-    if (targetNode == nullptr) {
+    if (targetNode == nullptr)
+    {
         insertNode(target_id);
         targetNode = getNode(target_id);
     }
 
-    if (!node->searchEdge(target_id)) {
-        if (getDirected()) {
+    if (!node->searchEdge(target_id))
+    {
+        if (getDirected())
+        {
             node->incrementOutDegree();
             targetNode->incrementInDegree();
             node->insertEdge(target_id, weight);
-        } else {
+        }
+        else
+        {
             node->incrementInDegree();
             node->insertEdge(target_id, weight);
             targetNode->incrementInDegree();
@@ -161,27 +173,35 @@ void Graph::insertEdge(int id, int target_id, float weight)
 }
 
 void Graph::removeNode(int id)
-{ 
-    if (!searchNode(id)) {
+{
+    if (!searchNode(id))
+    {
         cerr << "Erro: Nó " << id << " não foi encontrado" << endl;
-    } else {
+    }
+    else
+    {
         Node *currentNode = nullptr;
         Node *previousNode = nullptr;
 
-        for (currentNode = getFirstNode(); currentNode->getId() != id; currentNode = currentNode->getNextNode()) {
+        for (currentNode = getFirstNode(); currentNode->getId() != id; currentNode = currentNode->getNextNode())
+        {
             previousNode = currentNode;
         }
 
-        if (previousNode != nullptr) {
+        if (previousNode != nullptr)
+        {
             previousNode->setNextNode(currentNode->getNextNode());
-        } else {
+        }
+        else
+        {
             setFirstNode(currentNode->getNextNode());
         }
 
-        if (currentNode->getNextNode() == nullptr) {
+        if (currentNode->getNextNode() == nullptr)
+        {
             setLastNode(previousNode);
         }
-        
+
         currentNode->removeAllEdges();
         delete currentNode;
     }
@@ -189,12 +209,15 @@ void Graph::removeNode(int id)
 
 bool Graph::searchNode(int id)
 {
-    if (getFirstNode() != nullptr) {
-        for (Node *aux = getFirstNode(); aux != nullptr; aux->getNextNode()) {
-            if (aux->getId() == id) {
+    if (getFirstNode() != nullptr)
+    {
+        for (Node *aux = getFirstNode(); aux != nullptr; aux->getNextNode())
+        {
+            if (aux->getId() == id)
+            {
                 return true;
             }
-        }   
+        }
     }
 
     return false;
@@ -202,12 +225,15 @@ bool Graph::searchNode(int id)
 
 Node *Graph::getNode(int id)
 {
-    if (getFirstNode() != nullptr) {
-        for (Node *aux = getFirstNode(); aux != nullptr; aux->getNextNode()) {
-            if (aux->getId() == id) {
+    if (getFirstNode() != nullptr)
+    {
+        for (Node *aux = getFirstNode(); aux != nullptr; aux->getNextNode())
+        {
+            if (aux->getId() == id)
+            {
                 return aux;
             }
-        }   
+        }
     }
 
     return nullptr;
@@ -217,21 +243,21 @@ Node *Graph::getNode(int id)
 
 void Graph::breadthFirstSearch(ofstream &output_file)
 {
-    
+
 }
 
 
 
 float Graph::floydMarshall(int idSource, int idTarget)
 {
-    
+
 }
 
-   
+
 
 float Graph::dijkstra(int idSource, int idTarget)
 {
-    
+
 }
 
 //function that prints a topological sorting
@@ -245,11 +271,39 @@ void Graph::breadthFirstSearch(ofstream& output_file)
 
 }
 
-Graph* Graph::getVertexInduced(int* listIdNodes)
+Graph* Graph::getVertexInduced(vector<int> listIdNodes)
 {
     Graph *subgraph = new Graph(0, this->getDirected(), this->getWeightedEdge(), this->getWeightedNode());
+    int listSize = listIdNodes.size();
 
-    
+    for (int i = 0; i < listSize; i++)
+    {
+        subgraph->insertNode(listIdNodes[i]);
+
+        Node *node = getNode(listIdNodes[i]);
+
+        if (node != nullptr){
+            if(i+1 < listIdNodes.size()){
+                int j = i;
+                for (Node *auxNode = getNode(listIdNodes[j++]); auxNode != nullptr; auxNode = getNode(listIdNodes[j++])){
+                    for (Edge *auxEdge = auxNode->getFirstEdge(); auxEdge != nullptr; auxEdge = auxEdge->getNextEdge()){
+                        if(j == listIdNodes.size())
+                            break;
+
+                        if(node->getId() == auxEdge->getTargetId()){
+                            node->insertEdge(auxNode, auxEdge->getWeight());
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    return subgraph;
+
+
 }
 
 Graph* Graph::agmKuskal()

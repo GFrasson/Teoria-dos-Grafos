@@ -50,7 +50,7 @@ class Graph{
         //methods phase1
         void topologicalSorting();
         void breadthFirstSearch(ofstream& output_file);
-        Graph* getVertexInduced(int* listIdNodes);
+        Graph* getVertexInduced(vector<int> listIdNodes);
         Graph* agmKuskal();
         Graph* agmPrim();
         float floydMarshall(int idSource, int idTarget);
